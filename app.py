@@ -84,11 +84,14 @@ def fetch_feed(url):
                 st = source_el.find(f'{{{atom_ns}}}title')
                 if st is not None:
                     source_title = st.text or ''
+            content_el = entry.find(f'{{{atom_ns}}}content')
+            snippet = strip_html(content_el.text if content_el is not None else '')
             items.append({
                 'title': strip_html(title),
                 'link': link,
                 'pubDate': pub,
                 'source': source_title,
+                'snippet': snippet,
             })
     else:
         # Fallback: RSS 2.0
@@ -252,6 +255,7 @@ class Handler(http.server.BaseHTTPRequestHandler):
                     'date':     a.get('dateDisplay', ''),
                     'source':   a.get('source', '') or a.get('feedLabel', ''),
                     'category': a.get('category', ''),
+                    'snippet':  a.get('snippet', ''),
                 } for a in articles]
             })
 
@@ -402,6 +406,7 @@ main { padding:24px 28px; overflow-y:auto; }
 .empty .big { font-family:'Playfair Display',serif; font-size:3.5rem; color:var(--rule); display:block; margin-bottom:10px; }
 .empty p { font-size:0.84rem; line-height:1.8; }
 .nores { font-family:'IBM Plex Mono',monospace; font-size:0.7rem; color:var(--muted); padding:7px 0; font-style:italic; }
+.art-snippet { font-size:0.78rem; color:var(--muted); line-height:1.5; margin-top:3px; }
 </style>
 </head>
 <body>
@@ -785,6 +790,7 @@ function renderSection(sec, section) {
           <div>
             <a class="art-title" href="${art.link}" target="_blank" rel="noopener">${art.title}</a>
             <div class="art-meta">${art.date ? art.date + ' · ' : ''}${art.source || ''}</div>
+            ${art.snippet ? '<div class="art-snippet">' + art.snippet + '</div>' : ''}
           </div>
           <div class="art-actions">
             <button type="button" class="btn-remove" data-cat="${section.catName}" data-idx="${i}">Remove</button>
@@ -900,9 +906,10 @@ function downloadDigest() {
                 <p style="font-style:normal;font-weight:normal;line-height:125%;margin:10px 0;padding:0;color:#696969;font-family:Helvetica;font-size:16px;text-align:left" dir="ltr">
                   <a style="color:#0073c8;font-weight:normal;text-decoration:underline" href="${art.link}" target="_blank" rel="noopener noreferrer">${art.title}</a>
                 </p>
-                <p style="font-style:normal;font-weight:normal;line-height:125%;margin:2px 0 14px;padding:0;color:#696969;font-family:Helvetica;font-size:16px;text-align:left" dir="ltr">
+                <p style="font-style:normal;font-weight:normal;line-height:125%;margin:2px 0 4px;padding:0;color:#696969;font-family:Helvetica;font-size:16px;text-align:left" dir="ltr">
                   ${art.date ? art.date + ' ' : ''}${art.source || ''}
-                </p>`).join('')}
+                </p>
+                ${art.snippet ? '<p style="font-style:normal;font-weight:normal;line-height:125%;margin:2px 0 14px;padding:0;color:#999999;font-family:Helvetica;font-size:14px;text-align:left" dir="ltr">' + art.snippet + '</p>' : '<p style="margin:0 0 14px"></p>'}`).join('')}
             </td>
           </tr></tbody>
         </table>
