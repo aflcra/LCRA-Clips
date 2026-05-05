@@ -2,5 +2,5 @@ services:
   - type: web
     name: alerts-digest
     runtime: python
-    buildCommand: ""
-    startCommand: python3 app.py
+    buildCommand: "pip install --upgrade pip"
+    startCommand: python app.py
