@@ -1,11 +1,6 @@
-#!/bin/bash
-# Find whatever python3 is available and run the app
-for cmd in python3 python python3.14 python3.13 python3.12; do
-  if command -v $cmd &> /dev/null; then
-    echo "Starting with $cmd"
-    exec $cmd app.py
-    break
-  fi
-done
-echo "ERROR: No python interpreter found"
-exit 1
+services:
+  - type: web
+    name: alerts-digest
+    runtime: python
+    buildCommand: "pip install --upgrade pip"
+    startCommand: /opt/render/project/src/.venv/bin/python app.py
