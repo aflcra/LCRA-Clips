@@ -1,0 +1,1 @@
+# Alerts Digest — uses Python standard library only
