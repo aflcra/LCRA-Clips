@@ -417,6 +417,9 @@ main { padding:24px 28px; overflow-y:auto; }
 .btn-remove:hover { border-color:var(--accent); color:var(--accent); }
 .btn-move { background:none; border:1px solid var(--rule); color:var(--muted); cursor:pointer; font-family:'IBM Plex Mono',monospace; font-size:0.55rem; padding:2px 6px; transition:all .15s; }
 .btn-move:hover { border-color:var(--ink); color:var(--ink); }
+.btn-paywall { background:none; border:1px solid var(--rule); color:var(--muted); cursor:pointer; font-family:'IBM Plex Mono',monospace; font-size:0.55rem; padding:2px 6px; transition:all .15s; white-space:nowrap; }
+.btn-paywall:hover { border-color:#e6a817; color:#e6a817; }
+.btn-paywall.active { background:#e6a817; border-color:#e6a817; color:#fff; }
 
 /* Add manual entry */
 .add-entry-section { margin-top:10px; border-top:1px dashed var(--rule); padding-top:10px; }
@@ -839,6 +842,7 @@ function renderSection(sec, section) {
             <select class="btn-move" data-cat="${section.catName}" data-idx="${i}" title="Move to category">
               ${config.categories.map(c => `<option value="${c}" ${c === section.catName ? 'selected' : ''}>${c}</option>`).join('')}
             </select>
+            <button type="button" class="btn-paywall ${art.paywallBypass ? 'active' : ''}" data-cat="${section.catName}" data-idx="${i}" title="Remove paywall">⚿ ${art.paywallBypass ? 'Bypassed' : 'Paywall'}</button>
           </div>
         </div>`;
     });
@@ -857,6 +861,13 @@ function renderSection(sec, section) {
   sec.querySelectorAll('.btn-move').forEach(sel => {
     sel.addEventListener('change', () => {
       moveArticle(sel.dataset.cat, parseInt(sel.dataset.idx), sel.value);
+    });
+  });
+
+  // Paywall toggle buttons
+  sec.querySelectorAll('.btn-paywall').forEach(btn => {
+    btn.addEventListener('click', () => {
+      togglePaywall(btn.dataset.cat, parseInt(btn.dataset.idx));
     });
   });
 }
@@ -880,6 +891,24 @@ function moveArticle(fromCat, idx, toCat) {
   rerenderSection(fromCat);
   rerenderSection(toCat);
   updateSummary();
+}
+
+function togglePaywall(catName, idx) {
+  const section = digestData.find(s => s.catName === catName);
+  if (!section) return;
+  const art = section.articles[idx];
+  if (!art) return;
+  const PROXY = 'https://removepaywalls.com/';
+  if (art.paywallBypass) {
+    // Remove bypass — restore original URL
+    art.link = art.link.replace(PROXY, '');
+    art.paywallBypass = false;
+  } else {
+    // Apply bypass
+    art.link = PROXY + art.link;
+    art.paywallBypass = true;
+  }
+  rerenderSection(catName);
 }
 
 function rerenderSection(catName) {
