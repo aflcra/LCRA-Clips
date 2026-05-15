@@ -23,10 +23,36 @@ DATA_FILE = Path('data.json')
 DEFAULT_CATEGORIES = [
     'LCRA',
     'WATER',
-    'POWER',
-    'CYBERSECURITY',
-    'ECONOMY',
-    'FINANCIAL MARKETS',
+    'POWER/GENERAL',
+    'POWER/TEXAS AGENCIES/POLICY',
+    'POWER/FEDERAL AGENCIES/POLICY',
+    'POWER/DATA CENTERS',
+    'POWER/RENEWABLES',
+]
+
+DEFAULT_FEEDS = [
+    # LCRA
+    {'id': 'f1',  'label': 'LCRA (1)',                        'url': 'https://www.google.com/alerts/feeds/13511019394945225480/5196916693591774672',  'category': 'LCRA'},
+    {'id': 'f2',  'label': 'LCRA (2)',                        'url': 'https://www.google.com/alerts/feeds/13511019394945225480/13384593130295334636', 'category': 'LCRA'},
+    {'id': 'f3',  'label': 'LCRA (3)',                        'url': 'https://www.google.com/alerts/feeds/13511019394945225480/14521192268956444991', 'category': 'LCRA'},
+    {'id': 'f4',  'label': 'LCRA (4)',                        'url': 'https://www.google.com/alerts/feeds/13511019394945225480/2601092851162468878',  'category': 'LCRA'},
+    {'id': 'f5',  'label': 'LCRA (5)',                        'url': 'https://www.google.com/alerts/feeds/13511019394945225480/13657602621270007615', 'category': 'LCRA'},
+    {'id': 'f6',  'label': 'LCRA (6)',                        'url': 'https://www.google.com/alerts/feeds/13511019394945225480/9859098899763733085',  'category': 'LCRA'},
+    # WATER
+    {'id': 'f7',  'label': 'Water (1)',                       'url': 'https://www.google.com/alerts/feeds/13511019394945225480/9024913130796224535',  'category': 'WATER'},
+    {'id': 'f8',  'label': 'Water (2)',                       'url': 'https://www.google.com/alerts/feeds/13511019394945225480/4627425023827007235',  'category': 'WATER'},
+    # POWER/GENERAL
+    {'id': 'f9',  'label': 'Power/General (1)',               'url': 'https://www.google.com/alerts/feeds/13511019394945225480/10002473983532597975', 'category': 'POWER/GENERAL'},
+    {'id': 'f10', 'label': 'Power/General (2)',               'url': 'https://www.google.com/alerts/feeds/13511019394945225480/13319106911004620620', 'category': 'POWER/GENERAL'},
+    {'id': 'f11', 'label': 'Power/General (3)',               'url': 'https://www.google.com/alerts/feeds/13511019394945225480/10858855206459240367', 'category': 'POWER/GENERAL'},
+    # POWER/TEXAS AGENCIES/POLICY
+    {'id': 'f12', 'label': 'Power/Texas Agencies/Policy',    'url': 'https://www.google.com/alerts/feeds/13511019394945225480/113139485254667152',   'category': 'POWER/TEXAS AGENCIES/POLICY'},
+    # POWER/FEDERAL AGENCIES/POLICY
+    {'id': 'f13', 'label': 'Power/Federal Agencies/Policy',  'url': 'https://www.google.com/alerts/feeds/13511019394945225480/5453680920866486539',  'category': 'POWER/FEDERAL AGENCIES/POLICY'},
+    # POWER/DATA CENTERS
+    {'id': 'f14', 'label': 'Power/Data Centers',             'url': 'https://www.google.com/alerts/feeds/13511019394945225480/5167466528067371434',  'category': 'POWER/DATA CENTERS'},
+    # POWER/RENEWABLES
+    {'id': 'f15', 'label': 'Power/Renewables',               'url': 'https://www.google.com/alerts/feeds/13511019394945225480/17155108499299171508', 'category': 'POWER/RENEWABLES'},
 ]
 
 def load_data():
@@ -37,7 +63,7 @@ def load_data():
             pass
     return {
         'categories': DEFAULT_CATEGORIES,
-        'feeds': [],  # [{id, label, url, category}]
+        'feeds': DEFAULT_FEEDS,
     }
 
 def save_data(data):
@@ -746,6 +772,22 @@ function renderResults() {
     resultsEl.appendChild(sec);
   }
 
+  // Add Juicer social media section
+  const juicerSec = document.createElement('div');
+  juicerSec.className = 'cat-sec';
+  juicerSec.style.animationDelay = `${delay}ms`;
+  juicerSec.innerHTML = `
+    <div class="cat-hdr">
+      <h2>SOCIAL MEDIA</h2>
+      <span class="cnt">@lcra-flood</span>
+    </div>
+    <div id="juicer-embed">
+      <link rel="stylesheet" href="https://www.juicer.io/embed/lcra-flood/stylesheet.css" type="text/css">
+      <div class="juicer-feed" data-feed-id="lcra-flood"></div>
+      <script src="https://www.juicer.io/embed/lcra-flood/embed-code.js?beta=true" async defer><\/script>
+    </div>`;
+  resultsEl.appendChild(juicerSec);
+
   // Add manual entry form at the bottom
   const addSection = document.createElement('div');
   addSection.innerHTML = `
@@ -917,6 +959,29 @@ function downloadDigest() {
     </table>`;
   }
 
+  // Juicer section for digest download
+  const juicerDigestSection = `
+    <table style="min-width:100%;border-collapse:collapse" width="100%" cellspacing="0" cellpadding="0" border="0">
+      <tbody><tr><td style="padding-top:9px" valign="top">
+        <table style="max-width:100%;min-width:100%;border-collapse:collapse;float:left" width="100%" cellspacing="0" cellpadding="0" border="0" align="left">
+          <tbody><tr>
+            <td style="padding:0px 18px 9px;text-align:left;word-break:break-word;color:#696969;font-family:Helvetica;font-size:16px;line-height:100%" valign="top">
+              <h1 style="display:block;margin:0;padding:0;color:#202020;font-family:Helvetica;font-size:26px;font-style:normal;font-weight:bold;line-height:125%;letter-spacing:normal;text-align:left">
+                <span style="color:#0073C8">SOCIAL MEDIA</span>
+              </h1>
+            </td>
+          </tr></tbody>
+        </table>
+      </td></tr></tbody>
+    </table>
+    <table style="min-width:100%;border-collapse:collapse" width="100%" cellspacing="0" cellpadding="0" border="0">
+      <tbody><tr><td style="padding:9px 18px 18px" valign="top">
+        <link rel="stylesheet" href="https://www.juicer.io/embed/lcra-flood/stylesheet.css" type="text/css">
+        <div class="juicer-feed" data-feed-id="lcra-flood"></div>
+        <script src="https://www.juicer.io/embed/lcra-flood/embed-code.js?beta=true" async defer><\/script>
+      </td></tr></tbody>
+    </table>`;
+
   const html = `<!DOCTYPE html>
 <html lang="en"><head><meta charset="UTF-8"><title>${mastheadTitle} – ${today}</title></head>
 <body style="background:#ffffff;margin:0;padding:0;font-family:Helvetica,sans-serif;">
@@ -928,7 +993,7 @@ function downloadDigest() {
         <td style="text-align:right;vertical-align:bottom"><span style="font-family:Helvetica;font-size:12px;color:#888">${today}</span></td>
       </tr></tbody></table>
     </td></tr>
-    <tr><td valign="top">${sectionsHtml}</td></tr>
+    <tr><td valign="top">${sectionsHtml}${juicerDigestSection}</td></tr>
     <tr><td style="padding:16px 18px;border-top:1px solid #ccc">
       <p style="font-family:Helvetica;font-size:11px;color:#aaa;margin:0;text-align:center">Generated by Alerts Digest · ${today}</p>
     </td></tr>
